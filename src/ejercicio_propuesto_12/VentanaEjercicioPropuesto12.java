@@ -5,10 +5,14 @@ import Utilidades.UIUtils;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 /**
  * Panel interactivo para el Ejercicio Propuesto No 12.
- * Liquidación de Salario Bruto, Retención en la Fuente y Salario Neto.
+ * Liquidación de Salario Bruto, Retención en la Fuente y Salario Neto
+ * con gráfico de barras Java2D y exportación de comprobante a archivo .txt.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 2.0/2026
@@ -26,6 +30,9 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
     private JLabel lblResNeto;
 
     private JTextArea txtResultado;
+    private GraficoNomina canvasNomina;
+
+    private EjercicioPropuesto12 ultimoCalculo;
 
     public VentanaEjercicioPropuesto12() {
         setLayout(new BorderLayout(15, 15));
@@ -48,49 +55,49 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         txtEnunciado.setEditable(false);
         pnlEnunciado.add(txtEnunciado, BorderLayout.CENTER);
 
-        // ── Tarjeta Centro: Inputs y Desglose ───────────────────────────
-        JPanel pnlCentro = new JPanel(new GridLayout(1, 2, 15, 0));
+        // ── Tarjeta Centro: Inputs, Gráfico y Resumen ────────────────────
+        JPanel pnlCentro = new JPanel(new GridLayout(1, 3, 12, 0));
         pnlCentro.setBackground(UIUtils.COLOR_FONDO);
 
-        // Formulario de Inputs
-        JPanel pnlForm = UIUtils.crearPanelTarjeta("Datos del Empleado y Nómina", UIUtils.COLOR_ACCENTO1);
+        // Panel 1: Formulario
+        JPanel pnlForm = UIUtils.crearPanelTarjeta("Datos de Nómina", UIUtils.COLOR_ACCENTO1);
         pnlForm.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(6, 6, 6, 6);
+        gbc.insets = new Insets(4, 4, 4, 4);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         gbc.gridx = 0; gbc.gridy = 0;
-        pnlForm.add(crearLabelForm("Código Empleado:"), gbc);
+        pnlForm.add(crearLabelForm("Código:"), gbc);
         gbc.gridx = 1;
-        txtCodigo = new JTextField("EMP-101", 10);
+        txtCodigo = new JTextField("EMP-101", 8);
         UIUtils.estilizarCampoTexto(txtCodigo);
         pnlForm.add(txtCodigo, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1;
-        pnlForm.add(crearLabelForm("Nombres y Apellidos:"), gbc);
+        pnlForm.add(crearLabelForm("Nombres:"), gbc);
         gbc.gridx = 1;
-        txtNombres = new JTextField("Carlos Andrés Pérez", 15);
+        txtNombres = new JTextField("Carlos Pérez", 10);
         UIUtils.estilizarCampoTexto(txtNombres);
         pnlForm.add(txtNombres, gbc);
 
         gbc.gridx = 0; gbc.gridy = 2;
-        pnlForm.add(crearLabelForm("Horas Trabajadas:"), gbc);
+        pnlForm.add(crearLabelForm("Horas:"), gbc);
         gbc.gridx = 1;
-        txtHoras = new JTextField("48", 10);
+        txtHoras = new JTextField("48", 8);
         UIUtils.estilizarCampoTexto(txtHoras);
         pnlForm.add(txtHoras, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3;
-        pnlForm.add(crearLabelForm("Valor Hora ($):"), gbc);
+        pnlForm.add(crearLabelForm("Valor ($):"), gbc);
         gbc.gridx = 1;
-        txtValorHora = new JTextField("5000", 10);
+        txtValorHora = new JTextField("5000", 8);
         UIUtils.estilizarCampoTexto(txtValorHora);
         pnlForm.add(txtValorHora, gbc);
 
         gbc.gridx = 0; gbc.gridy = 4;
-        pnlForm.add(crearLabelForm("% Retención Fuente:"), gbc);
+        pnlForm.add(crearLabelForm("Ret. (%):"), gbc);
         gbc.gridx = 1;
-        txtPorcentajeRetencion = new JTextField("12.5", 10);
+        txtPorcentajeRetencion = new JTextField("12.5", 8);
         UIUtils.estilizarCampoTexto(txtPorcentajeRetencion);
         pnlForm.add(txtPorcentajeRetencion, gbc);
 
@@ -99,26 +106,37 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         UIUtils.estilizarBotonAccion(btnLiquidar, UIUtils.COLOR_ACCENTO2);
         pnlForm.add(btnLiquidar, gbc);
 
-        // Desglose de Resultados
-        JPanel pnlResultados = UIUtils.crearPanelTarjeta("Resumen de Liquidación", UIUtils.COLOR_ACCENTO3);
-        JPanel pnlCards = new JPanel(new GridLayout(3, 1, 10, 10));
+        // Panel 2: Canvas Gráfico Java2D
+        JPanel pnlCanvasHolder = UIUtils.crearPanelTarjeta("Gráfico de Nómina", UIUtils.COLOR_ACCENTO2);
+        canvasNomina = new GraficoNomina();
+        pnlCanvasHolder.add(canvasNomina, BorderLayout.CENTER);
+
+        // Panel 3: Resumen Cards + Exportar TXT
+        JPanel pnlResultados = UIUtils.crearPanelTarjeta("Resumen", UIUtils.COLOR_ACCENTO3);
+        JPanel pnlCards = new JPanel(new GridLayout(4, 1, 6, 6));
         pnlCards.setBackground(UIUtils.COLOR_PANEL);
 
         lblResBruto = crearCardResultado("Salario Bruto:", "$ 240.000", UIUtils.COLOR_ACCENTO1);
-        lblResRetencion = crearCardResultado("Retención en la Fuente:", "$ 30.000", UIUtils.COLOR_ACCENTO4);
-        lblResNeto = crearCardResultado("Salario Neto a Pagar:", "$ 210.000", UIUtils.COLOR_ACCENTO2);
+        lblResRetencion = crearCardResultado("Retención Fuente:", "$ 30.000", UIUtils.COLOR_ACCENTO4);
+        lblResNeto = crearCardResultado("Salario Neto:", "$ 210.000", UIUtils.COLOR_ACCENTO2);
+
+        JButton btnExportar = new JButton("📄 Exportar Comprobante (.txt)");
+        UIUtils.estilizarBotonAccion(btnExportar, UIUtils.COLOR_ACCENTO3);
+        btnExportar.addActionListener(e -> exportarComprobante());
 
         pnlCards.add(lblResBruto);
         pnlCards.add(lblResRetencion);
         pnlCards.add(lblResNeto);
+        pnlCards.add(btnExportar);
         pnlResultados.add(pnlCards, BorderLayout.CENTER);
 
         pnlCentro.add(pnlForm);
+        pnlCentro.add(pnlCanvasHolder);
         pnlCentro.add(pnlResultados);
 
         // ── Tarjeta Sur: Consola ────────────────────────────────────────
         JPanel pnlSur = UIUtils.crearPanelTarjeta("Detalle de Comprobante", UIUtils.COLOR_TEXTO_DIM);
-        txtResultado = new JTextArea(5, 40);
+        txtResultado = new JTextArea(4, 40);
         pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
 
         add(pnlEnunciado, BorderLayout.NORTH);
@@ -137,13 +155,13 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
     }
 
     private JLabel crearCardResultado(String titulo, String valorInicial, Color colorAccento) {
-        JLabel lbl = new JLabel("<html><body style='width: 180px;'><b>" + titulo + "</b><br><font size='5' color='" +
+        JLabel lbl = new JLabel("<html><body><b>" + titulo + "</b><br><font size='4' color='" +
             toHex(colorAccento) + "'>" + valorInicial + "</font></body></html>");
         lbl.setOpaque(true);
         lbl.setBackground(UIUtils.COLOR_CONSOLE_BG);
         lbl.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(colorAccento, 1, true),
-            BorderFactory.createEmptyBorder(10, 12, 10, 12)
+            BorderFactory.createEmptyBorder(4, 8, 4, 8)
         ));
         return lbl;
     }
@@ -160,28 +178,57 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
             double valH = Double.parseDouble(txtValorHora.getText().trim());
             double retP = Double.parseDouble(txtPorcentajeRetencion.getText().trim());
 
-            EjercicioPropuesto12 ej = new EjercicioPropuesto12(cod, nom, hrs, valH, retP);
+            ultimoCalculo = new EjercicioPropuesto12(cod, nom, hrs, valH, retP);
+            canvasNomina.setValores(ultimoCalculo.getSalarioBruto(), ultimoCalculo.getRetencionFuente(), ultimoCalculo.getSalarioNeto());
 
-            lblResBruto.setText("<html><body><b>Salario Bruto:</b><br><font size='5' color='" + toHex(UIUtils.COLOR_ACCENTO1) + "'>" +
-                ej.formatoMoneda(ej.getSalarioBruto()) + "</font></body></html>");
-            lblResRetencion.setText("<html><body><b>Retención Fuente (" + retP + "%):</b><br><font size='5' color='" + toHex(UIUtils.COLOR_ACCENTO4) + "'>" +
-                ej.formatoMoneda(ej.getRetencionFuente()) + "</font></body></html>");
-            lblResNeto.setText("<html><body><b>Salario Neto a Pagar:</b><br><font size='5' color='" + toHex(UIUtils.COLOR_ACCENTO2) + "'>" +
-                ej.formatoMoneda(ej.getSalarioNeto()) + "</font></body></html>");
+            lblResBruto.setText("<html><body><b>Salario Bruto:</b><br><font size='4' color='" + toHex(UIUtils.COLOR_ACCENTO1) + "'>" +
+                ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioBruto()) + "</font></body></html>");
+            lblResRetencion.setText("<html><body><b>Retención Fuente (" + retP + "%):</b><br><font size='4' color='" + toHex(UIUtils.COLOR_ACCENTO4) + "'>" +
+                ultimoCalculo.formatoMoneda(ultimoCalculo.getRetencionFuente()) + "</font></body></html>");
+            lblResNeto.setText("<html><body><b>Salario Neto:</b><br><font size='4' color='" + toHex(UIUtils.COLOR_ACCENTO2) + "'>" +
+                ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioNeto()) + "</font></body></html>");
 
             StringBuilder sb = new StringBuilder();
             sb.append(">>> COMPROBANTE DE LIQUIDACIÓN DE NÓMINA <<<\n");
-            sb.append("  • Código Empleado     : ").append(ej.getCodigoEmpleado()).append("\n");
-            sb.append("  • Empleado            : ").append(ej.getNombres()).append("\n");
-            sb.append(String.format("  • Horas Laboradas     : %.1f hrs @ %s / hora\n", ej.getHorasTrabajadas(), ej.formatoMoneda(ej.getValorHora())));
+            sb.append("  • Código Empleado     : ").append(ultimoCalculo.getCodigoEmpleado()).append("\n");
+            sb.append("  • Empleado            : ").append(ultimoCalculo.getNombres()).append("\n");
+            sb.append(String.format("  • Horas Laboradas     : %.1f hrs @ %s / hora\n", ultimoCalculo.getHorasTrabajadas(), ultimoCalculo.formatoMoneda(ultimoCalculo.getValorHora())));
             sb.append("  -------------------------------------------------------------\n");
-            sb.append("  • SALARIO BRUTO       : ").append(ej.formatoMoneda(ej.getSalarioBruto())).append("\n");
-            sb.append(String.format("  • RETENCIÓN FUENTE    : %s (%.2f%% del bruto)\n", ej.formatoMoneda(ej.getRetencionFuente()), retP));
-            sb.append("  • SALARIO NETO        : ").append(ej.formatoMoneda(ej.getSalarioNeto())).append("\n");
+            sb.append("  • SALARIO BRUTO       : ").append(ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioBruto())).append("\n");
+            sb.append(String.format("  • RETENCIÓN FUENTE    : %s (%.2f%% del bruto)\n", ultimoCalculo.formatoMoneda(ultimoCalculo.getRetencionFuente()), retP));
+            sb.append("  • SALARIO NETO        : ").append(ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioNeto())).append("\n");
             txtResultado.setText(sb.toString());
 
         } catch (Exception ex) {
-            txtResultado.setText("ERROR: Por favor verifique que los campos numéricos (Horas, Valor Hora, Retención) sean válidos.");
+            txtResultado.setText("ERROR: Por favor verifique que los campos numéricos sean válidos.");
+        }
+    }
+
+    private void exportarComprobante() {
+        if (ultimoCalculo == null) return;
+        try {
+            File archivo = new File("Comprobante_Nomina_" + ultimoCalculo.getCodigoEmpleado() + ".txt");
+            try (PrintWriter pw = new PrintWriter(new FileWriter(archivo))) {
+                pw.println("============================================================");
+                pw.println("      UNIVERSIDAD NACIONAL DE COLOMBIA — POO ACTIVIDAD 1    ");
+                pw.println("                COMPROBANTE OFICIAL DE NÓMINA               ");
+                pw.println("============================================================");
+                pw.println("Código Empleado     : " + ultimoCalculo.getCodigoEmpleado());
+                pw.println("Nombres             : " + ultimoCalculo.getNombres());
+                pw.println("Horas Trabajadas    : " + ultimoCalculo.getHorasTrabajadas() + " hrs");
+                pw.println("Valor por Hora      : " + ultimoCalculo.formatoMoneda(ultimoCalculo.getValorHora()));
+                pw.println("Porcentaje Retención: " + ultimoCalculo.getPorcentajeRetencion() + "%");
+                pw.println("------------------------------------------------------------");
+                pw.println("SALARIO BRUTO       : " + ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioBruto()));
+                pw.println("RETENCIÓN EN FUENTE : " + ultimoCalculo.formatoMoneda(ultimoCalculo.getRetencionFuente()));
+                pw.println("SALARIO NETO        : " + ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioNeto()));
+                pw.println("============================================================");
+            }
+            JOptionPane.showMessageDialog(this, "Comprobante generado con éxito en:\n" + archivo.getAbsolutePath(),
+                "Exportación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al generar archivo: " + ex.getMessage(),
+                "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
