@@ -15,7 +15,6 @@ import java.awt.*;
 
 /**
  * VentanaPrincipalActividad1 - Menú Principal Unificado de la Actividad 1.
- * Incluye conmutador de 4 temas dinámicos, consulta de persistencia y modal de diagnósticos.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 3.0/2026
@@ -34,7 +33,7 @@ public class VentanaPrincipalActividad1 extends JFrame {
     public VentanaPrincipalActividad1() {
         UIUtils.aplicarTema();
 
-        setTitle("UNAL - POO Actividad 1 - Suite Profesional de Lógica");
+        setTitle("Actividad 1 - Lógica de Programación (UNAL)");
         setSize(1100, 740);
         setMinimumSize(new Dimension(950, 620));
         setLocationRelativeTo(null);
@@ -43,12 +42,12 @@ public class VentanaPrincipalActividad1 extends JFrame {
         panelRaiz = new JPanel(new BorderLayout());
         panelRaiz.setBackground(UIUtils.COLOR_FONDO);
 
-        // ── ENCABEZADO NORTE CON SELECTOR DE TEMA, HISTORIAL Y ACERCA DE ──
+        // Header
         pnlHeader = new JPanel(new BorderLayout());
         pnlHeader.setBackground(UIUtils.COLOR_PANEL);
         pnlHeader.setBorder(new EmptyBorder(12, 20, 12, 20));
 
-        JLabel lblTitulo = new JLabel("UNIVERSIDAD NACIONAL DE COLOMBIA — POO ACTIVIDAD 1");
+        JLabel lblTitulo = new JLabel("UNIVERSIDAD NACIONAL DE COLOMBIA - ACTIVIDAD 1");
         lblTitulo.setFont(UIUtils.FUENTE_TITULO);
         lblTitulo.setForeground(UIUtils.COLOR_ACCENTO1);
 
@@ -61,11 +60,11 @@ public class VentanaPrincipalActividad1 extends JFrame {
         pnlTitulos.add(lblTitulo);
         pnlTitulos.add(lblSub);
 
-        // Controles a la derecha (Selector de Tema + Historial + Botón Acerca De)
+        // Controles a la derecha
         JPanel pnlAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         pnlAcciones.setBackground(UIUtils.COLOR_PANEL);
 
-        JLabel lblTema = new JLabel("🎨 Tema:");
+        JLabel lblTema = new JLabel("Tema:");
         lblTema.setFont(UIUtils.FUENTE_BOLD);
         lblTema.setForeground(UIUtils.COLOR_TEXTO);
 
@@ -73,11 +72,11 @@ public class VentanaPrincipalActividad1 extends JFrame {
         comboTemas.setFont(UIUtils.FUENTE_BOLD);
         comboTemas.addActionListener(e -> cambiarTema((UIUtils.Tema) comboTemas.getSelectedItem()));
 
-        JButton btnHistorial = new JButton("📜 Historial");
+        JButton btnHistorial = new JButton("Historial");
         UIUtils.estilizarBotonAccion(btnHistorial, UIUtils.COLOR_ACCENTO2);
         btnHistorial.addActionListener(e -> new VentanaHistorial(this).setVisible(true));
 
-        JButton btnAcercaDe = new JButton("ℹ️ Acerca de");
+        JButton btnAcercaDe = new JButton("Acerca de");
         UIUtils.estilizarBotonAccion(btnAcercaDe, UIUtils.COLOR_ACCENTO1);
         btnAcercaDe.addActionListener(e -> new DialogoAcercaDe(this).setVisible(true));
 
@@ -89,13 +88,13 @@ public class VentanaPrincipalActividad1 extends JFrame {
         pnlHeader.add(pnlTitulos, BorderLayout.WEST);
         pnlHeader.add(pnlAcciones, BorderLayout.EAST);
 
-        // ── PANEL LATERAL (SIDEBAR DE NAVEGACIÓN) ────────────────────
+        // Sidebar
         pnlSidebar = new JPanel(new GridLayout(6, 1, 0, 8));
         pnlSidebar.setBackground(UIUtils.COLOR_PANEL);
         pnlSidebar.setPreferredSize(new Dimension(280, 0));
         pnlSidebar.setBorder(new EmptyBorder(15, 12, 15, 12));
 
-        JLabel lblSecciones = new JLabel("  SECCIONES Y EJERCICIOS");
+        JLabel lblSecciones = new JLabel("  EJERCICIOS DISPONIBLES");
         lblSecciones.setFont(UIUtils.FUENTE_SUBTITULO);
         lblSecciones.setForeground(UIUtils.COLOR_ACCENTO3);
         pnlSidebar.add(lblSecciones);
@@ -117,7 +116,7 @@ public class VentanaPrincipalActividad1 extends JFrame {
             pnlSidebar.add(botonesNavegacion[i]);
         }
 
-        // ── PANEL DE CONTENIDO (CARD LAYOUT) ──────────────────────────
+        // CardLayout
         cardLayout = new CardLayout();
         panelContenido = new JPanel(cardLayout);
         panelContenido.setBackground(UIUtils.COLOR_FONDO);

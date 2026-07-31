@@ -5,8 +5,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
- * Diálogo modal institucional con diagnósticos del sistema (JVM, RAM, SO)
- * y créditos de la Universidad Nacional de Colombia.
+ * Diálogo modal con información del sistema y datos institucionales.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 3.0/2026
@@ -14,7 +13,7 @@ import java.awt.*;
 public class DialogoAcercaDe extends JDialog {
 
     public DialogoAcercaDe(JFrame owner) {
-        super(owner, "Acerca del Sistema — UNAL POO Actividad 1", true);
+        super(owner, "Acerca del Sistema - UNAL POO Actividad 1", true);
         setSize(540, 420);
         setLocationRelativeTo(owner);
         setLayout(new BorderLayout());
@@ -23,7 +22,6 @@ public class DialogoAcercaDe extends JDialog {
         panelContent.setBackground(UIUtils.COLOR_PANEL);
         panelContent.setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Título e Info UNAL
         JLabel lblTitulo = new JLabel("UNIVERSIDAD NACIONAL DE COLOMBIA", SwingConstants.CENTER);
         lblTitulo.setFont(UIUtils.FUENTE_TITULO);
         lblTitulo.setForeground(UIUtils.COLOR_ACCENTO1);
@@ -37,7 +35,6 @@ public class DialogoAcercaDe extends JDialog {
         pnlNorte.add(lblTitulo);
         pnlNorte.add(lblSub);
 
-        // Área Diagnóstico Sistema
         JTextArea txtInfo = new JTextArea();
         txtInfo.setFont(UIUtils.FUENTE_CONSOLA);
         txtInfo.setBackground(UIUtils.COLOR_CONSOLE_BG);

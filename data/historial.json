@@ -1,5 +1,29 @@
 [
   {
+    "fecha": "2026-07-30 22:01:45",
+    "ejercicio": "Ejercicio Propuesto 17",
+    "entradas": "r=5.0 cm",
+    "resultados": "Área=78,5398 cm², Perímetro=31,4159 cm"
+  },
+  {
+    "fecha": "2026-07-30 22:01:45",
+    "ejercicio": "Ejercicio Propuesto 14",
+    "entradas": "n=5.0",
+    "resultados": "Cuadrado=25,00, Cubo=125,00"
+  },
+  {
+    "fecha": "2026-07-30 22:01:45",
+    "ejercicio": "Ejercicio Propuesto 12",
+    "entradas": "Empleado=Carlos Pérez (EMP-101), Horas=48.0, Tarifa=5000.0",
+    "resultados": "Bruto=240000.0, Neto=210000.0"
+  },
+  {
+    "fecha": "2026-07-30 22:01:45",
+    "ejercicio": "Ejercicio Resuelto 4",
+    "entradas": "Juan=9.0 años",
+    "resultados": "Mamá=27,00, Alberto=6,00, Ana=12,00"
+  },
+  {
     "fecha": "2026-07-30 21:59:37",
     "ejercicio": "Ejercicio Resuelto 4",
     "entradas": "Juan=9.0 años",

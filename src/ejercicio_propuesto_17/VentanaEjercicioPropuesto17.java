@@ -1,6 +1,8 @@
 package ejercicio_propuesto_17;
 
+import Utilidades.ManejadorPersistencia;
 import Utilidades.UIUtils;
+import Utilidades.ValorInvalidoException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -8,10 +10,9 @@ import java.awt.*;
 
 /**
  * Panel interactivo para el Ejercicio Propuesto No 17.
- * Cálculo del Área y Perímetro (Longitud) con dibujo geométrico interactivo en Java2D.
  * 
  * @author Cristian Ruiz Hernandez
- * @version 2.0/2026
+ * @version 3.0/2026
  */
 public class VentanaEjercicioPropuesto17 extends JPanel {
 
@@ -27,14 +28,14 @@ public class VentanaEjercicioPropuesto17 extends JPanel {
         setBackground(UIUtils.COLOR_FONDO);
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // ── Tarjeta Norte: Enunciado ──────────────────────────────────
+        // Enunciado
         JPanel pnlEnunciado = UIUtils.crearPanelTarjeta("Ejercicio Propuesto No 17: Área y Perímetro del Círculo (Pág 50)", UIUtils.COLOR_ACCENTO4);
         JTextArea txtEnunciado = new JTextArea(
             "Dado el radio de un círculo, elaborar un algoritmo que obtenga el área y la longitud de la circunferencia.\n\n" +
             "Fórmulas Geométricas:\n" +
-            "  • Área del Círculo                = π · r²\n" +
-            "  • Longitud de la Circunferencia  = 2 · π · r\n" +
-            "  • Diámetro                        = 2 · r"
+            "  • Área del Círculo                = PI * r^2\n" +
+            "  • Longitud de la Circunferencia  = 2 * PI * r\n" +
+            "  • Diámetro                        = 2 * r"
         );
         txtEnunciado.setFont(UIUtils.FUENTE_NORMAL);
         txtEnunciado.setForeground(UIUtils.COLOR_TEXTO);
@@ -42,11 +43,10 @@ public class VentanaEjercicioPropuesto17 extends JPanel {
         txtEnunciado.setEditable(false);
         pnlEnunciado.add(txtEnunciado, BorderLayout.CENTER);
 
-        // ── Tarjeta Centro: Inputs, Gráfico Java2D y Resultados ─────────
+        // Inputs y Canvas
         JPanel pnlCentro = new JPanel(new GridLayout(1, 3, 12, 0));
         pnlCentro.setBackground(UIUtils.COLOR_FONDO);
 
-        // Panel 1: Input Form
         JPanel pnlInput = UIUtils.crearPanelTarjeta("Parámetros", UIUtils.COLOR_ACCENTO1);
         pnlInput.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -64,22 +64,22 @@ public class VentanaEjercicioPropuesto17 extends JPanel {
         pnlInput.add(txtRadio, gbc);
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.gridwidth = 2;
-        JButton btnCalcular = new JButton("📐 Calcular Geometría");
+        JButton btnCalcular = new JButton("Calcular Geometría");
         UIUtils.estilizarBotonAccion(btnCalcular, UIUtils.COLOR_ACCENTO4);
         pnlInput.add(btnCalcular, gbc);
 
-        // Panel 2: Canvas Visual Java2D
+        // Canvas
         JPanel pnlCanvasHolder = UIUtils.crearPanelTarjeta("Visualización Geométrica", UIUtils.COLOR_ACCENTO4);
         canvasCirculo = new GraficoCirculo();
         pnlCanvasHolder.add(canvasCirculo, BorderLayout.CENTER);
 
-        // Panel 3: Cards Resultados
+        // Cards
         JPanel pnlResultados = UIUtils.crearPanelTarjeta("Resultados", UIUtils.COLOR_ACCENTO2);
         JPanel pnlCards = new JPanel(new GridLayout(3, 1, 8, 8));
         pnlCards.setBackground(UIUtils.COLOR_PANEL);
 
-        lblResArea = crearCard("Área (π·r²)", "78.5398 cm²", UIUtils.COLOR_ACCENTO1);
-        lblResLongitud = crearCard("Longitud (2·π·r)", "31.4159 cm", UIUtils.COLOR_ACCENTO2);
+        lblResArea = crearCard("Área (PI*r^2)", "78.5398 cm²", UIUtils.COLOR_ACCENTO1);
+        lblResLongitud = crearCard("Longitud (2*PI*r)", "31.4159 cm", UIUtils.COLOR_ACCENTO2);
         lblResDiametro = crearCard("Diámetro (2r)", "10.00 cm", UIUtils.COLOR_ACCENTO3);
 
         pnlCards.add(lblResArea);
@@ -91,7 +91,7 @@ public class VentanaEjercicioPropuesto17 extends JPanel {
         pnlCentro.add(pnlCanvasHolder);
         pnlCentro.add(pnlResultados);
 
-        // ── Tarjeta Sur: Consola ────────────────────────────────────────
+        // Consola
         JPanel pnlSur = UIUtils.crearPanelTarjeta("Consola de Cálculo Geométrico", UIUtils.COLOR_TEXTO_DIM);
         txtResultado = new JTextArea(4, 40);
         pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
@@ -123,14 +123,24 @@ public class VentanaEjercicioPropuesto17 extends JPanel {
 
     private void calcular() {
         try {
-            double r = Double.parseDouble(txtRadio.getText().trim());
-            EjercicioPropuesto17 ej = new EjercicioPropuesto17(r);
+            String strR = txtRadio.getText().trim();
+            double r;
+            try {
+                r = Double.parseDouble(strR);
+            } catch (NumberFormatException nfe) {
+                throw new ValorInvalidoException("El campo Radio debe ser un número entero o decimal válido.", "Radio (r)");
+            }
 
+            if (r <= 0) {
+                throw new ValorInvalidoException("El radio del círculo debe ser un valor positivo mayor a cero.", "Radio (r)");
+            }
+
+            EjercicioPropuesto17 ej = new EjercicioPropuesto17(r);
             canvasCirculo.setRadio(r);
 
-            lblResArea.setText("<html><body><b>Área (π·r²):</b><br><font size='4' color='" +
+            lblResArea.setText("<html><body><b>Área (PI*r^2):</b><br><font size='4' color='" +
                 toHex(UIUtils.COLOR_ACCENTO1) + "'>" + String.format("%.4f cm²", ej.getArea()) + "</font></body></html>");
-            lblResLongitud.setText("<html><body><b>Longitud (2·π·r):</b><br><font size='4' color='" +
+            lblResLongitud.setText("<html><body><b>Longitud (2*PI*r):</b><br><font size='4' color='" +
                 toHex(UIUtils.COLOR_ACCENTO2) + "'>" + String.format("%.4f cm", ej.getLongitudCircunferencia()) + "</font></body></html>");
             lblResDiametro.setText("<html><body><b>Diámetro (2r):</b><br><font size='4' color='" +
                 toHex(UIUtils.COLOR_ACCENTO3) + "'>" + String.format("%.2f cm", ej.getDiametro()) + "</font></body></html>");
@@ -139,12 +149,19 @@ public class VentanaEjercicioPropuesto17 extends JPanel {
             sb.append(">>> CÓMPUTO GEOMÉTRICO DEL CÍRCULO <<<\n");
             sb.append(String.format("  • Radio (r)                      = %.4f cm\n", ej.getRadio()));
             sb.append(String.format("  • Diámetro (2r)                  = %.4f cm\n", ej.getDiametro()));
-            sb.append(String.format("  • ÁREA DEL CÍRCULO (π · r²)       = %.6f cm²\n", ej.getArea()));
-            sb.append(String.format("  • LONGITUD CIRCUNFERENCIA (2πr)  = %.6f cm\n", ej.getLongitudCircunferencia()));
+            sb.append(String.format("  • ÁREA DEL CÍRCULO (PI * r^2)    = %.6f cm²\n", ej.getArea()));
+            sb.append(String.format("  • LONGITUD CIRCUNFERENCIA (2PIr) = %.6f cm\n", ej.getLongitudCircunferencia()));
             txtResultado.setText(sb.toString());
 
+            ManejadorPersistencia.guardarRegistro("Ejercicio Propuesto 17",
+                "r=" + r + " cm",
+                String.format("Área=%.4f cm², Perímetro=%.4f cm", ej.getArea(), ej.getLongitudCircunferencia()));
+
+        } catch (ValorInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
+            txtResultado.setText("ERROR DE VALIDACIÓN: " + ex.getMessage());
         } catch (Exception ex) {
-            txtResultado.setText("ERROR: Ingrese un número positivo válido para el radio.");
+            txtResultado.setText("ERROR INESPERADO: " + ex.getMessage());
         }
     }
 }

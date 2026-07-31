@@ -10,7 +10,6 @@ import java.awt.*;
 
 /**
  * Panel interactivo para el Ejercicio Resuelto No 5.
- * Prueba de escritorio con trazabilidad y reproductor animado paso a paso.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 3.0/2026
@@ -32,7 +31,7 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         setBackground(UIUtils.COLOR_FONDO);
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // ── Tarjeta Norte: Enunciado ──────────────────────────────────
+        // Enunciado
         JPanel pnlEnunciado = UIUtils.crearPanelTarjeta("Ejercicio Resuelto No 5: Prueba de Escritorio (Pág 49)", UIUtils.COLOR_ACCENTO5);
         JTextArea txtEnunciado = new JTextArea(
             "Algoritmo a evaluar:\n" +
@@ -47,12 +46,11 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         txtEnunciado.setEditable(false);
         pnlEnunciado.add(txtEnunciado, BorderLayout.CENTER);
 
-        // ── Tarjeta Centro: Inputs, Reproductor y Tabla ──────────────────
+        // Barra de Controles
         JPanel pnlCentro = new JPanel(new BorderLayout(10, 10));
         pnlCentro.setBackground(UIUtils.COLOR_FONDO);
 
-        // Barra de Controles e Inputs
-        JPanel pnlBarra = UIUtils.crearPanelTarjeta("Parámetros y Reproductor de Prueba", UIUtils.COLOR_ACCENTO1);
+        JPanel pnlBarra = UIUtils.crearPanelTarjeta("Parámetros e Instrucciones de Prueba", UIUtils.COLOR_ACCENTO1);
         pnlBarra.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 4));
 
         pnlBarra.add(new JLabel("X0:"));
@@ -65,20 +63,19 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         UIUtils.estilizarCampoTexto(txtYInicial);
         pnlBarra.add(txtYInicial);
 
-        JButton btnEjecutar = new JButton("⚡ Trazar Todo");
+        JButton btnEjecutar = new JButton("Trazar Todo");
         UIUtils.estilizarBotonAccion(btnEjecutar, UIUtils.COLOR_ACCENTO2);
         pnlBarra.add(btnEjecutar);
 
-        // Reproductor Animado
-        JButton btnPlay = new JButton("▶ Reproducir Animación");
+        JButton btnPlay = new JButton("Reproducir Animación");
         UIUtils.estilizarBotonAccion(btnPlay, UIUtils.COLOR_ACCENTO1);
         pnlBarra.add(btnPlay);
 
-        JButton btnStop = new JButton("⏸ Pausa");
+        JButton btnStop = new JButton("Pausa");
         UIUtils.estilizarBotonAccion(btnStop, UIUtils.COLOR_ACCENTO4);
         pnlBarra.add(btnStop);
 
-        // Tabla de trazabilidad
+        // Tabla
         String[] columnas = {"Paso", "Instrucción del Algoritmo", "Valor de X", "Valor de Y", "Valor de SUMA"};
         modelTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -103,7 +100,7 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         pnlCentro.add(pnlBarra, BorderLayout.NORTH);
         pnlCentro.add(scrollTabla, BorderLayout.CENTER);
 
-        // ── Tarjeta Sur: Consola ────────────────────────────────────────
+        // Consola
         JPanel pnlSur = UIUtils.crearPanelTarjeta("Resultado Final del Algoritmo", UIUtils.COLOR_ACCENTO3);
         txtResultado = new JTextArea(4, 40);
         pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
@@ -112,7 +109,6 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         add(pnlCentro, BorderLayout.CENTER);
         add(pnlSur, BorderLayout.SOUTH);
 
-        // Timer de Animación
         timerAnimacion = new Timer(750, e -> avanzarPasoAnimacion());
 
         btnEjecutar.addActionListener(e -> ejecutarPrueba(true));

@@ -9,7 +9,7 @@ import java.awt.*;
 
 /**
  * Utilidades de Interfaz Gráfica para la Actividad 1.
- * Incluye el motor de 4 temas dinámicos en tiempo real (Live Theme Engine).
+ * Define la paleta de colores y estilos visuales para los componentes Swing.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 3.0/2026
@@ -17,10 +17,10 @@ import java.awt.*;
 public class UIUtils {
 
     public enum Tema {
-        CATPPUCCIN_DARK("Catppuccin Dark"),
-        CATPPUCCIN_LIGHT("Catppuccin Light"),
-        DRACULA("Dracula Midnight"),
-        NORD("Nord Emerald");
+        CATPPUCCIN_DARK("Catppuccin Oscuro"),
+        CATPPUCCIN_LIGHT("Catppuccin Claro"),
+        DRACULA("Dracula"),
+        NORD("Nord");
 
         private final String nombre;
         Tema(String nombre) { this.nombre = nombre; }
@@ -30,7 +30,7 @@ public class UIUtils {
 
     public static Tema temaActual = Tema.CATPPUCCIN_DARK;
 
-    // ── Paletas Dinámicas ─────────────────────────────────────────────
+    // Colores por defecto
     public static Color COLOR_FONDO       = new Color(30, 30, 46);
     public static Color COLOR_PANEL       = new Color(49, 50, 68);
     public static Color COLOR_TARJETA     = new Color(69, 71, 90);
@@ -46,9 +46,9 @@ public class UIUtils {
     public static Color COLOR_TEXTO_DIM   = new Color(166, 173, 200);
     public static Color COLOR_CONSOLE_BG  = new Color(24, 24, 37);
 
-    // ── Tipografía ───────────────────────────────────────────────────
-    public static final Font FUENTE_TITULO     = new Font("Segoe UI", Font.BOLD, 20);
-    public static final Font FUENTE_SUBTITULO  = new Font("Segoe UI", Font.BOLD, 15);
+    // Tipografía
+    public static final Font FUENTE_TITULO     = new Font("Segoe UI", Font.BOLD, 18);
+    public static final Font FUENTE_SUBTITULO  = new Font("Segoe UI", Font.BOLD, 14);
     public static final Font FUENTE_NORMAL     = new Font("Segoe UI", Font.PLAIN, 13);
     public static final Font FUENTE_BOLD       = new Font("Segoe UI", Font.BOLD, 13);
     public static final Font FUENTE_CONSOLA    = new Font("Consolas", Font.PLAIN, 13);
@@ -136,7 +136,6 @@ public class UIUtils {
         boton.setFocusPainted(false);
         boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
         boton.setHorizontalAlignment(SwingConstants.LEFT);
-        boton.setIconTextGap(10);
         boton.setBorder(new CompoundBorder(
             new LineBorder(seleccionado ? COLOR_ACCENTO1 : COLOR_BORDES, 1, true),
             new EmptyBorder(10, 15, 10, 15)

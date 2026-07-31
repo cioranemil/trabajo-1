@@ -1,21 +1,19 @@
 package ejercicio_propuesto_12;
 
+import Utilidades.ManejadorPersistencia;
 import Utilidades.UIUtils;
+import Utilidades.ValorInvalidoException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 
 /**
  * Panel interactivo para el Ejercicio Propuesto No 12.
- * Liquidación de Salario Bruto, Retención en la Fuente y Salario Neto
- * con gráfico de barras Java2D y exportación de comprobante a archivo .txt.
+ * Liquidación de Salario Bruto, Retención en la Fuente y Salario Neto.
  * 
  * @author Cristian Ruiz Hernandez
- * @version 2.0/2026
+ * @version 3.0/2026
  */
 public class VentanaEjercicioPropuesto12 extends JPanel {
 
@@ -39,14 +37,14 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         setBackground(UIUtils.COLOR_FONDO);
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // ── Tarjeta Norte: Enunciado ──────────────────────────────────
+        // Enunciado
         JPanel pnlEnunciado = UIUtils.crearPanelTarjeta("Ejercicio Propuesto No 12: Liquidación de Salario (Pág 50)", UIUtils.COLOR_ACCENTO2);
         JTextArea txtEnunciado = new JTextArea(
             "Un empleado trabaja determinado número de horas a la semana a una tarifa por hora fija.\n" +
             "El porcentaje de retención en la fuente se aplica sobre el salario bruto.\n\n" +
             "Fórmulas:\n" +
-            "  • Salario Bruto = Horas Trabajadas · Valor Hora\n" +
-            "  • Retención Fuente = Salario Bruto · (% Retención / 100)\n" +
+            "  • Salario Bruto = Horas Trabajadas * Valor Hora\n" +
+            "  • Retención Fuente = Salario Bruto * (% Retención / 100)\n" +
             "  • Salario Neto = Salario Bruto - Retención Fuente"
         );
         txtEnunciado.setFont(UIUtils.FUENTE_NORMAL);
@@ -55,11 +53,10 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         txtEnunciado.setEditable(false);
         pnlEnunciado.add(txtEnunciado, BorderLayout.CENTER);
 
-        // ── Tarjeta Centro: Inputs, Gráfico y Resumen ────────────────────
+        // Inputs y Gráfico
         JPanel pnlCentro = new JPanel(new GridLayout(1, 3, 12, 0));
         pnlCentro.setBackground(UIUtils.COLOR_FONDO);
 
-        // Panel 1: Formulario
         JPanel pnlForm = UIUtils.crearPanelTarjeta("Datos de Nómina", UIUtils.COLOR_ACCENTO1);
         pnlForm.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -102,16 +99,16 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         pnlForm.add(txtPorcentajeRetencion, gbc);
 
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
-        JButton btnLiquidar = new JButton("💼 Liquidar Nómina");
+        JButton btnLiquidar = new JButton("Liquidar Nómina");
         UIUtils.estilizarBotonAccion(btnLiquidar, UIUtils.COLOR_ACCENTO2);
         pnlForm.add(btnLiquidar, gbc);
 
-        // Panel 2: Canvas Gráfico Java2D
+        // Canvas Gráfico
         JPanel pnlCanvasHolder = UIUtils.crearPanelTarjeta("Gráfico de Nómina", UIUtils.COLOR_ACCENTO2);
         canvasNomina = new GraficoNomina();
         pnlCanvasHolder.add(canvasNomina, BorderLayout.CENTER);
 
-        // Panel 3: Resumen Cards + Exportar TXT
+        // Resumen
         JPanel pnlResultados = UIUtils.crearPanelTarjeta("Resumen", UIUtils.COLOR_ACCENTO3);
         JPanel pnlCards = new JPanel(new GridLayout(4, 1, 6, 6));
         pnlCards.setBackground(UIUtils.COLOR_PANEL);
@@ -120,7 +117,7 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         lblResRetencion = crearCardResultado("Retención Fuente:", "$ 30.000", UIUtils.COLOR_ACCENTO4);
         lblResNeto = crearCardResultado("Salario Neto:", "$ 210.000", UIUtils.COLOR_ACCENTO2);
 
-        JButton btnExportar = new JButton("📄 Exportar Comprobante (.txt)");
+        JButton btnExportar = new JButton("Exportar Comprobante (.txt)");
         UIUtils.estilizarBotonAccion(btnExportar, UIUtils.COLOR_ACCENTO3);
         btnExportar.addActionListener(e -> exportarComprobante());
 
@@ -134,7 +131,7 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         pnlCentro.add(pnlCanvasHolder);
         pnlCentro.add(pnlResultados);
 
-        // ── Tarjeta Sur: Consola ────────────────────────────────────────
+        // Consola
         JPanel pnlSur = UIUtils.crearPanelTarjeta("Detalle de Comprobante", UIUtils.COLOR_TEXTO_DIM);
         txtResultado = new JTextArea(4, 40);
         pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
@@ -174,9 +171,20 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
         try {
             String cod = txtCodigo.getText().trim();
             String nom = txtNombres.getText().trim();
-            double hrs = Double.parseDouble(txtHoras.getText().trim());
-            double valH = Double.parseDouble(txtValorHora.getText().trim());
-            double retP = Double.parseDouble(txtPorcentajeRetencion.getText().trim());
+
+            double hrs, valH, retP;
+            try { hrs = Double.parseDouble(txtHoras.getText().trim()); }
+            catch (Exception ex) { throw new ValorInvalidoException("El campo Horas debe ser un número válido.", "Horas"); }
+
+            try { valH = Double.parseDouble(txtValorHora.getText().trim()); }
+            catch (Exception ex) { throw new ValorInvalidoException("El campo Valor Hora debe ser un número válido.", "Valor Hora"); }
+
+            try { retP = Double.parseDouble(txtPorcentajeRetencion.getText().trim()); }
+            catch (Exception ex) { throw new ValorInvalidoException("El Porcentaje de Retención debe ser un número válido.", "Retención"); }
+
+            if (hrs < 0 || valH < 0 || retP < 0 || retP > 100) {
+                throw new ValorInvalidoException("Los valores de horas y tarifa deben ser positivos y la retención estar entre 0% y 100%.", "Nómina");
+            }
 
             ultimoCalculo = new EjercicioPropuesto12(cod, nom, hrs, valH, retP);
             canvasNomina.setValores(ultimoCalculo.getSalarioBruto(), ultimoCalculo.getRetencionFuente(), ultimoCalculo.getSalarioNeto());
@@ -199,18 +207,25 @@ public class VentanaEjercicioPropuesto12 extends JPanel {
             sb.append("  • SALARIO NETO        : ").append(ultimoCalculo.formatoMoneda(ultimoCalculo.getSalarioNeto())).append("\n");
             txtResultado.setText(sb.toString());
 
+            ManejadorPersistencia.guardarRegistro("Ejercicio Propuesto 12",
+                "Empleado=" + nom + " (" + cod + "), Horas=" + hrs + ", Tarifa=" + valH,
+                "Bruto=" + ultimoCalculo.getSalarioBruto() + ", Neto=" + ultimoCalculo.getSalarioNeto());
+
+        } catch (ValorInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error de Validación", JOptionPane.ERROR_MESSAGE);
+            txtResultado.setText("ERROR DE VALIDACIÓN: " + ex.getMessage());
         } catch (Exception ex) {
-            txtResultado.setText("ERROR: Por favor verifique que los campos numéricos sean válidos.");
+            txtResultado.setText("ERROR INESPERADO: " + ex.getMessage());
         }
     }
 
     private void exportarComprobante() {
         if (ultimoCalculo == null) return;
         try {
-            File archivo = new File("Comprobante_Nomina_" + ultimoCalculo.getCodigoEmpleado() + ".txt");
-            try (PrintWriter pw = new PrintWriter(new FileWriter(archivo))) {
+            java.io.File archivo = new java.io.File("Comprobante_Nomina_" + ultimoCalculo.getCodigoEmpleado() + ".txt");
+            try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.FileWriter(archivo))) {
                 pw.println("============================================================");
-                pw.println("      UNIVERSIDAD NACIONAL DE COLOMBIA — POO ACTIVIDAD 1    ");
+                pw.println("      UNIVERSIDAD NACIONAL DE COLOMBIA - ACTIVIDAD 1       ");
                 pw.println("                COMPROBANTE OFICIAL DE NÓMINA               ");
                 pw.println("============================================================");
                 pw.println("Código Empleado     : " + ultimoCalculo.getCodigoEmpleado());

@@ -8,8 +8,7 @@ import java.awt.*;
 import java.util.List;
 
 /**
- * Panel/Modal Swing para consultar y restaurar los registros almacenados
- * históricamente en disco (data/historial.json).
+ * Panel/Modal Swing para consultar los registros almacenados en disco.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 3.0/2026
@@ -20,7 +19,7 @@ public class VentanaHistorial extends JDialog {
     private DefaultTableModel modelTabla;
 
     public VentanaHistorial(JFrame parent) {
-        super(parent, "Historial de Operaciones y Persistencia de Datos", true);
+        super(parent, "Historial de Operaciones y Persistencia", true);
         setSize(780, 500);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
@@ -31,7 +30,7 @@ public class VentanaHistorial extends JDialog {
 
         // Header
         JPanel pnlHeader = UIUtils.crearPanelTarjeta("Historial Local de Operaciones (data/historial.json)", UIUtils.COLOR_ACCENTO1);
-        JLabel lblInfo = new JLabel("Registros almacenados en disco de forma persistente entre sesiones:");
+        JLabel lblInfo = new JLabel("Registros almacenados en disco de forma persistente:");
         lblInfo.setFont(UIUtils.FUENTE_NORMAL);
         lblInfo.setForeground(UIUtils.COLOR_TEXTO_DIM);
         pnlHeader.add(lblInfo, BorderLayout.SOUTH);
@@ -59,11 +58,11 @@ public class VentanaHistorial extends JDialog {
         JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         pnlBotones.setBackground(UIUtils.COLOR_FONDO);
 
-        JButton btnRefrescar = new JButton("🔄 Refrescar");
+        JButton btnRefrescar = new JButton("Refrescar");
         UIUtils.estilizarBotonAccion(btnRefrescar, UIUtils.COLOR_ACCENTO1);
         btnRefrescar.addActionListener(e -> cargarDatos());
 
-        JButton btnLimpiar = new JButton("🗑️ Limpiar Historial");
+        JButton btnLimpiar = new JButton("Limpiar Historial");
         UIUtils.estilizarBotonAccion(btnLimpiar, UIUtils.COLOR_ACCENTO4);
         btnLimpiar.addActionListener(e -> {
             int op = JOptionPane.showConfirmDialog(this,

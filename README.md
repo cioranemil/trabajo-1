@@ -1,45 +1,46 @@
-# 🎓 Universidad Nacional de Colombia
-## Departamento de Ciencias de la Computación — Programación Orientada a Objetos (POO)
+# Actividad 1 - Programación Orientada a Objetos (UNAL)
 
-![Java 25](https://img.shields.io/badge/Java-25%20LTS-orange?style=for-the-badge&logo=openjdk)
-![Swing GUI](https://img.shields.io/badge/GUI-Java%20Swing-blue?style=for-the-badge&logo=java)
-![LaTeX PDF](https://img.shields.io/badge/LaTeX-TeX%20Live%202026-green?style=for-the-badge&logo=latex)
-![Persistencia JSON](https://img.shields.io/badge/Persistencia-JSON%20%2F%20CSV-purple?style=for-the-badge)
-![Licencia UNAL](https://img.shields.io/badge/UNAL-Ingeniería-red?style=for-the-badge)
-
----
-
-## 📌 Actividad 1: Algoritmos y Lógica de Programación (Suite Profesional)
-
-Este repositorio contiene la solución completa, robusta e interactiva para la **Actividad 1** de la asignatura **Programación Orientada a Objetos** impartida en la Universidad Nacional de Colombia.
+Repositorio de la primera entrega de la asignatura **Programación Orientada a Objetos** en la Universidad Nacional de Colombia.
 
 * **Docente:** Walter Hugo Arboleda
-* **Autor:** Cristian Ruiz Hernandez ([cruizh@unal.edu.co](mailto:cruizh@unal.edu.co))
-* **Repositorio Oficial:** [github.com/cioranemil/trabajo-1](https://github.com/cioranemil/trabajo-1)
+* **Estudiante:** Cristian Ruiz Hernandez
+* **Correo:** cruizh@unal.edu.co
+* **Repositorio en GitHub:** https://github.com/cioranemil/trabajo-1
 
 ---
 
-## 🛡️ Criterios de Evaluación Cumplidos (Rúbrica Oficial)
+## De qué trata esta actividad
 
-### 1. Control de Excepciones y Tratamiento de Errores
-- **Jerarquía de Excepciones Personalizadas**: Implementación de [`ValorInvalidoException`](src/Utilidades/ValorInvalidoException.java) para la captura y validación de entradas numéricas negativas, fuera de rango o con formato erróneo.
-- **Tolerancia a Fallos**: Captura preventiva de `NumberFormatException`, `IllegalArgumentException` y errores de I/O mediante diálogos visuales de alerta (`JOptionPane`) impidiendo colapsos o cierres inesperados de la aplicación.
-
-### 2. Persistencia de Datos Local (JSON / CSV)
-- **Administrador de Persistencia ([`ManejadorPersistencia.java`](src/Utilidades/ManejadorPersistencia.java))**: Cada cálculo, liquidación de nómina y trazabilidad se almacena automáticamente en disco en la carpeta `data/`:
-  - `data/historial.json`: Estructura JSON indexada con fecha, ejercicio, entradas y resultados.
-  - `data/historial.csv`: Archivo separado por comas para análisis directo en Excel.
-- **Consulta de Historial Persistente ([`VentanaHistorial.java`](src/Utilidades/VentanaHistorial.java))**: Interfaz Swing que permite consultar, filtrar, refrescar y limpiar los registros históricos guardados en disco entre sesiones.
-
-### 3. Código Limpio y Documentación UML
-- Comentarios Javadoc completos en todas las clases y métodos.
-- Diagramas de Clases y Secuencia UML Mermaid incluidos a continuación.
+Esta entrega reune los 5 ejercicios de lógica y algoritmos del libro de Efraín Oviedo pedidos para la primera actividad del curso. Para presentar los resultados de forma ordenada y fácil de probar, construí una interfaz gráfica interactiva en Java Swing que integra todos los ejercicios en un solo menú con navegación lateral, gráficos interactivos, persistencia de datos y control de errores.
 
 ---
 
-## 📐 Diagramas de Arquitectura UML (Mermaid)
+## Ejercicios incluidos
 
-### Diagrama de Clases UML
+| Número | Tipo | Nombre del Ejercicio | Descripción corta | Clase principal |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | Resuelto 4 | Edades de la familia | Calcula las edades de Juan, Alberto (2/3), Ana (4/3) y la mamá (suma de las tres). | `EjercicioResuelto4.java` |
+| **2** | Resuelto 5 | Prueba de escritorio | Hace el seguimiento de variables (X, Y, SUMA) paso a paso con una tabla interactiva. | `EjercicioResuelto5.java` |
+| **3** | Propuesto 12 | Salarios y retención | Calcula salario bruto, retención en la fuente y salario neto de un empleado. | `EjercicioPropuesto12.java` |
+| **4** | Propuesto 14 | Cuadrado y cubo | Dado un número, obtiene su cuadrado (n²), cubo (n³) y su representación gráfica. | `EjercicioPropuesto14.java` |
+| **5** | Propuesto 17 | Geometría del círculo | Calcula el área (πr²), la longitud (2πr) y el diámetro (2r) con un canvas a escala. | `EjercicioPropuesto17.java` |
+
+---
+
+## Características de la aplicación
+
+- **Interfaz unificada en Swing:** Todo se maneja desde una misma ventana principal con barra lateral para cambiar entre ejercicios sin abrir ventanas emergentes.
+- **Temas de color:** Permite cambiar en tiempo real entre cuatro temas de color (Catppuccin Oscuro, Catppuccin Claro, Dracula y Nord).
+- **Gráficos en Java2D:** El ejercicio del círculo dibuja la figura a escala según el radio ingresado y el ejercicio de nómina dibuja un gráfico de barras comparativo del salario.
+- **Persistencia de datos:** Los datos de cada cálculo que se realiza se guardan automáticamente en disco en la carpeta `data/` en formatos `historial.json` y `historial.csv`, y se pueden consultar o limpiar desde la opción "Historial" en el menú.
+- **Manejo de excepciones:** Se implementó la clase `ValorInvalidoException` para validar las entradas (evitar texto donde van números, edades fuera de rango o números negativos en geometría) mostrando alertas claras sin que el programa colapse.
+
+---
+
+## Diagramas UML
+
+### Diagrama de Clases
+
 ```mermaid
 classDiagram
     class VentanaPrincipalActividad1 {
@@ -50,7 +51,6 @@ classDiagram
     class UIUtils {
         +Tema temaActual
         +cargarPaleta(tema: Tema)
-        +aplicarTema()
     }
 
     class ValorInvalidoException {
@@ -60,14 +60,13 @@ classDiagram
 
     class ManejadorPersistencia {
         +guardarRegistro(ejercicio: String, entradas: String, resultados: String)
-        +cargarHistorial(): List~RegistroHistorial~
+        +cargarHistorial(): List
         +limpiarHistorial()
     }
 
     class EjercicioResuelto4 {
         -edadJuan: double
         -edadMama: double
-        +getEdadMama(): double
     }
 
     class EjercicioResuelto5 {
@@ -78,7 +77,6 @@ classDiagram
     class EjercicioPropuesto12 {
         -salarioBruto: double
         -salarioNeto: double
-        +formatoMoneda(val: double): String
     }
 
     class EjercicioPropuesto14 {
@@ -98,61 +96,41 @@ classDiagram
     EjercicioPropuesto17 ..> ValorInvalidoException
 ```
 
-### Diagrama de Secuencia UML (Flujo de Persistencia)
+### Diagrama de Secuencia (Guardado de datos)
+
 ```mermaid
 sequenceDiagram
     autonumber
     actor Usuario
     participant GUI as VentanaEjercicioPropuesto12
-    participant Controller as EjercicioPropuesto12
-    participant Persistencia as ManejadorPersistencia
-    participant Disk as Disco Local (data/historial.json)
+    participant Logica as EjercicioPropuesto12
+    participant DB as ManejadorPersistencia
+    participant Archivo as data/historial.json
 
-    Usuario->>GUI: Ingresa Horas (48) y Tarifas ($5000)
-    Usuario->>GUI: Hace Clic en "Liquidar Nómina"
-    GUI->>Controller: Instancia EjercicioPropuesto12(48, 5000, 12.5)
-    Controller-->>GUI: Retorna Salario Bruto ($240k) y Neto ($210k)
-    GUI->>Persistencia: guardarRegistro("Ejercicio 12", entradas, resultados)
-    Persistencia->>Disk: Escribe registro formateado en JSON y CSV
-    Persistencia-->>GUI: Confirmación de Persistencia
-    GUI-->>Usuario: Muestra Comprobante y Gráfico de Barras Java2D
+    Usuario->>GUI: Ingresa horas y tarifa
+    Usuario->>GUI: Presiona "Liquidar Nómina"
+    GUI->>Logica: Calcula salario y retención
+    Logica-->>GUI: Retorna resultados
+    GUI->>DB: guardarRegistro()
+    DB->>Archivo: Escribe el cálculo en JSON y CSV
+    GUI-->>Usuario: Muestra resultados y actualiza gráfico
 ```
 
 ---
 
-## 🛠️ Instalación y Compilación
+## Cómo ejecutar el proyecto
 
-### Compilación y Ejecución Automatizada en Windows
-```cmd
-ejecutar.bat
-```
+### Opción 1: En Windows usando el script `.bat`
+Doble clic en el archivo `ejecutar.bat` en la raíz del proyecto.
 
-### Compilación Manual desde Consola
+### Opción 2: Ejecutar desde la consola
 ```bash
-# 1. Compilar fuentes Java
+# Compilar los archivos Java
 javac -encoding UTF-8 -d bin src/*.java src/**/*.java
 
-# 2. Generar archivo ejecutable JAR
+# Generar el ejecutable JAR
 jar cfe Actividad_1.jar MenuPrincipal -C bin .
 
-# 3. Ejecutar la aplicación
+# Correr la aplicación
 java -jar Actividad_1.jar
 ```
-
----
-
-## 🖼️ Galería de la Interfaz Visual
-
-### Menú Principal y Conmutador de Temas (Catppuccin Dark)
-![Menú Principal](doc/images/gui_menu_principal.png)
-
-### Historial de Persistencia de Datos (`data/historial.json`)
-![Historial](doc/images/gui_ejercicio_resuelto_5.png)
-
----
-
-## ✉️ Contacto y Autoría
-
-* **Autor:** Cristian Ruiz Hernandez
-* **Universidad:** Universidad Nacional de Colombia (Sede Medellín)
-* **Correo Institucional:** [cruizh@unal.edu.co](mailto:cruizh@unal.edu.co)
