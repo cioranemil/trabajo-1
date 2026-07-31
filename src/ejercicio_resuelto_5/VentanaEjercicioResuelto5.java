@@ -10,10 +10,10 @@ import java.awt.*;
 
 /**
  * Panel interactivo para el Ejercicio Resuelto No 5.
- * Prueba de escritorio y trazabilidad de variables X, Y y SUMA.
+ * Prueba de escritorio con trazabilidad y reproductor animado paso a paso.
  * 
  * @author Cristian Ruiz Hernandez
- * @version 2.0/2026
+ * @version 3.0/2026
  */
 public class VentanaEjercicioResuelto5 extends JPanel {
 
@@ -23,12 +23,16 @@ public class VentanaEjercicioResuelto5 extends JPanel {
     private DefaultTableModel modelTabla;
     private JTextArea txtResultado;
 
+    private Timer timerAnimacion;
+    private int pasoAnimado = -1;
+    private EjercicioResuelto5 ultimoCalculo;
+
     public VentanaEjercicioResuelto5() {
         setLayout(new BorderLayout(15, 15));
         setBackground(UIUtils.COLOR_FONDO);
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        // ── Tarjeta Norte: Enunciado del Algoritmo ──────────────────────
+        // ── Tarjeta Norte: Enunciado ──────────────────────────────────
         JPanel pnlEnunciado = UIUtils.crearPanelTarjeta("Ejercicio Resuelto No 5: Prueba de Escritorio (Pág 49)", UIUtils.COLOR_ACCENTO5);
         JTextArea txtEnunciado = new JTextArea(
             "Algoritmo a evaluar:\n" +
@@ -43,29 +47,38 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         txtEnunciado.setEditable(false);
         pnlEnunciado.add(txtEnunciado, BorderLayout.CENTER);
 
-        // ── Tarjeta Centro: Entradas y Tabla de Trazabilidad ─────────────
+        // ── Tarjeta Centro: Inputs, Reproductor y Tabla ──────────────────
         JPanel pnlCentro = new JPanel(new BorderLayout(10, 10));
         pnlCentro.setBackground(UIUtils.COLOR_FONDO);
 
-        // Barra superior de inputs
-        JPanel pnlInputs = UIUtils.crearPanelTarjeta("Parámetros Iniciales de Prueba", UIUtils.COLOR_ACCENTO1);
-        pnlInputs.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 5));
+        // Barra de Controles e Inputs
+        JPanel pnlBarra = UIUtils.crearPanelTarjeta("Parámetros y Reproductor de Prueba", UIUtils.COLOR_ACCENTO1);
+        pnlBarra.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 4));
 
-        pnlInputs.add(new JLabel("Valor Inicial X:"));
-        txtXInicial = new JTextField("20", 6);
+        pnlBarra.add(new JLabel("X0:"));
+        txtXInicial = new JTextField("20", 4);
         UIUtils.estilizarCampoTexto(txtXInicial);
-        pnlInputs.add(txtXInicial);
+        pnlBarra.add(txtXInicial);
 
-        pnlInputs.add(new JLabel("Valor Inicial Y:"));
-        txtYInicial = new JTextField("40", 6);
+        pnlBarra.add(new JLabel("Y0:"));
+        txtYInicial = new JTextField("40", 4);
         UIUtils.estilizarCampoTexto(txtYInicial);
-        pnlInputs.add(txtYInicial);
+        pnlBarra.add(txtYInicial);
 
-        JButton btnEjecutar = new JButton("▶ Ejecutar Prueba de Escritorio");
+        JButton btnEjecutar = new JButton("⚡ Trazar Todo");
         UIUtils.estilizarBotonAccion(btnEjecutar, UIUtils.COLOR_ACCENTO2);
-        pnlInputs.add(btnEjecutar);
+        pnlBarra.add(btnEjecutar);
 
-        // Tabla de trazabilidad de la prueba de escritorio
+        // Reproductor Animado
+        JButton btnPlay = new JButton("▶ Reproducir Animación");
+        UIUtils.estilizarBotonAccion(btnPlay, UIUtils.COLOR_ACCENTO1);
+        pnlBarra.add(btnPlay);
+
+        JButton btnStop = new JButton("⏸ Pausa");
+        UIUtils.estilizarBotonAccion(btnStop, UIUtils.COLOR_ACCENTO4);
+        pnlBarra.add(btnStop);
+
+        // Tabla de trazabilidad
         String[] columnas = {"Paso", "Instrucción del Algoritmo", "Valor de X", "Valor de Y", "Valor de SUMA"};
         modelTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -87,10 +100,10 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         JScrollPane scrollTabla = new JScrollPane(tblPasos);
         scrollTabla.setBorder(BorderFactory.createLineBorder(UIUtils.COLOR_BORDES, 1, true));
 
-        pnlCentro.add(pnlInputs, BorderLayout.NORTH);
+        pnlCentro.add(pnlBarra, BorderLayout.NORTH);
         pnlCentro.add(scrollTabla, BorderLayout.CENTER);
 
-        // ── Tarjeta Sur: Consola de Consolidado ────────────────────────
+        // ── Tarjeta Sur: Consola ────────────────────────────────────────
         JPanel pnlSur = UIUtils.crearPanelTarjeta("Resultado Final del Algoritmo", UIUtils.COLOR_ACCENTO3);
         txtResultado = new JTextArea(4, 40);
         pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
@@ -99,37 +112,81 @@ public class VentanaEjercicioResuelto5 extends JPanel {
         add(pnlCentro, BorderLayout.CENTER);
         add(pnlSur, BorderLayout.SOUTH);
 
-        btnEjecutar.addActionListener(e -> ejecutarPrueba());
-        ejecutarPrueba();
+        // Timer de Animación
+        timerAnimacion = new Timer(750, e -> avanzarPasoAnimacion());
+
+        btnEjecutar.addActionListener(e -> ejecutarPrueba(true));
+        btnPlay.addActionListener(e -> iniciarAnimacion());
+        btnStop.addActionListener(e -> detenerAnimacion());
+
+        ejecutarPrueba(true);
     }
 
-    private void ejecutarPrueba() {
+    private void ejecutarPrueba(boolean mostrarTodo) {
+        detenerAnimacion();
         try {
             double xVal = Double.parseDouble(txtXInicial.getText().trim());
             double yVal = Double.parseDouble(txtYInicial.getText().trim());
 
-            EjercicioResuelto5 ej = new EjercicioResuelto5(xVal, yVal);
+            ultimoCalculo = new EjercicioResuelto5(xVal, yVal);
             modelTabla.setRowCount(0);
 
-            for (EjercicioResuelto5.PasoPruebaEscritorio paso : ej.getPasos()) {
-                modelTabla.addRow(new Object[]{
-                    "Paso " + paso.getPaso(),
-                    paso.getInstruccion(),
-                    String.format("%.2f", paso.getValorX()),
-                    String.format("%.2f", paso.getValorY()),
-                    String.format("%.2f", paso.getValorSuma())
-                });
+            if (mostrarTodo) {
+                for (EjercicioResuelto5.PasoPruebaEscritorio paso : ultimoCalculo.getPasos()) {
+                    modelTabla.addRow(new Object[]{
+                        "Paso " + paso.getPaso(),
+                        paso.getInstruccion(),
+                        String.format("%.2f", paso.getValorX()),
+                        String.format("%.2f", paso.getValorY()),
+                        String.format("%.2f", paso.getValorSuma())
+                    });
+                }
+                actualizarTextoConsola(ultimoCalculo.getPasos().size());
             }
-
-            StringBuilder sb = new StringBuilder();
-            sb.append(">>> RESULTADO FINAL DE LA PRUEBA DE ESCRITORIO <<<\n");
-            sb.append(String.format("  • Valor acumulado final de X    = %.2f\n", ej.getXFinal()));
-            sb.append(String.format("  • Valor acumulado final de Y    = %.2f\n", ej.getYFinal()));
-            sb.append(String.format("  • VALOR FINAL DE LA SUMA        = %.2f\n", ej.getSumaFinal()));
-            txtResultado.setText(sb.toString());
 
         } catch (Exception ex) {
             txtResultado.setText("ERROR: Por favor ingrese valores numéricos válidos para X e Y.");
         }
+    }
+
+    private void iniciarAnimacion() {
+        ejecutarPrueba(false);
+        pasoAnimado = 0;
+        timerAnimacion.start();
+    }
+
+    private void detenerAnimacion() {
+        if (timerAnimacion != null && timerAnimacion.isRunning()) {
+            timerAnimacion.stop();
+        }
+    }
+
+    private void avanzarPasoAnimacion() {
+        if (ultimoCalculo == null) return;
+        if (pasoAnimado < ultimoCalculo.getPasos().size()) {
+            EjercicioResuelto5.PasoPruebaEscritorio paso = ultimoCalculo.getPasos().get(pasoAnimado);
+            modelTabla.addRow(new Object[]{
+                "Paso " + paso.getPaso(),
+                paso.getInstruccion(),
+                String.format("%.2f", paso.getValorX()),
+                String.format("%.2f", paso.getValorY()),
+                String.format("%.2f", paso.getValorSuma())
+            });
+            tblPasos.setRowSelectionInterval(pasoAnimado, pasoAnimado);
+            actualizarTextoConsola(pasoAnimado + 1);
+            pasoAnimado++;
+        } else {
+            detenerAnimacion();
+        }
+    }
+
+    private void actualizarTextoConsola(int pasosMostrados) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format(">>> PRUEBA DE ESCRITORIO (%d / %d PASOS EVALUADOS) <<<\n",
+            pasosMostrados, ultimoCalculo.getPasos().size()));
+        sb.append(String.format("  • Valor actual de X        = %.2f\n", ultimoCalculo.getXFinal()));
+        sb.append(String.format("  • Valor actual de Y        = %.2f\n", ultimoCalculo.getYFinal()));
+        sb.append(String.format("  • VALOR FINAL DE LA SUMA   = %.2f\n", ultimoCalculo.getSumaFinal()));
+        txtResultado.setText(sb.toString());
     }
 }
