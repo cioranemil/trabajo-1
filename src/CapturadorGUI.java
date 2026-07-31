@@ -5,17 +5,12 @@ import javax.imageio.ImageIO;
 import java.io.File;
 
 import MenuPrincipal.VentanaPrincipalActividad1;
-import ejercicio_resuelto_4.VentanaEjercicioResuelto4;
-import ejercicio_resuelto_5.VentanaEjercicioResuelto5;
-import ejercicio_propuesto_12.VentanaEjercicioPropuesto12;
-import ejercicio_propuesto_14.VentanaEjercicioPropuesto14;
-import ejercicio_propuesto_17.VentanaEjercicioPropuesto17;
 
 /**
  * CapturadorGUI - Genera capturas de pantalla PNG para la documentación de la Actividad 1.
  * 
  * @author Cristian Ruiz Hernandez
- * @version 1.0/2026
+ * @version 2.0/2026
  */
 public class CapturadorGUI {
 
@@ -31,37 +26,38 @@ public class CapturadorGUI {
                 File dirImages = new File("doc/images");
                 if (!dirImages.exists()) dirImages.mkdirs();
 
-                // 1. Menú Principal
                 VentanaPrincipalActividad1 vMain = new VentanaPrincipalActividad1();
-                vMain.setSize(520, 440);
+                vMain.setSize(1050, 720);
+                vMain.setLocationRelativeTo(null);
+                vMain.setVisible(true);
+                Thread.sleep(400);
+
+                // 1. Captura Menú Principal (Ejercicio 4)
                 capturarFrame(vMain, "doc/images/gui_menu_principal.png");
+                capturarFrame(vMain, "doc/images/gui_ejercicio_resuelto_4.png");
 
-                // 2. Ejercicio Resuelto 4
-                VentanaEjercicioResuelto4 v4 = new VentanaEjercicioResuelto4();
-                v4.setSize(700, 480);
-                capturarFrame(v4, "doc/images/gui_ejercicio_resuelto_4.png");
+                // 2. Ejercicio 5
+                vMain.cambiarTarjeta(1);
+                Thread.sleep(300);
+                capturarFrame(vMain, "doc/images/gui_ejercicio_resuelto_5.png");
 
-                // 3. Ejercicio Resuelto 5
-                VentanaEjercicioResuelto5 v5 = new VentanaEjercicioResuelto5();
-                v5.setSize(720, 500);
-                capturarFrame(v5, "doc/images/gui_ejercicio_resuelto_5.png");
+                // 3. Ejercicio 12
+                vMain.cambiarTarjeta(2);
+                Thread.sleep(300);
+                capturarFrame(vMain, "doc/images/gui_ejercicio_propuesto_12.png");
 
-                // 4. Ejercicio Propuesto 12
-                VentanaEjercicioPropuesto12 v12 = new VentanaEjercicioPropuesto12();
-                v12.setSize(780, 520);
-                capturarFrame(v12, "doc/images/gui_ejercicio_propuesto_12.png");
+                // 4. Ejercicio 14
+                vMain.cambiarTarjeta(3);
+                Thread.sleep(300);
+                capturarFrame(vMain, "doc/images/gui_ejercicio_propuesto_14.png");
 
-                // 5. Ejercicio Propuesto 14
-                VentanaEjercicioPropuesto14 v14 = new VentanaEjercicioPropuesto14();
-                v14.setSize(680, 460);
-                capturarFrame(v14, "doc/images/gui_ejercicio_propuesto_14.png");
-
-                // 6. Ejercicio Propuesto 17
-                VentanaEjercicioPropuesto17 v17 = new VentanaEjercicioPropuesto17();
-                v17.setSize(700, 480);
-                capturarFrame(v17, "doc/images/gui_ejercicio_propuesto_17.png");
+                // 5. Ejercicio 17
+                vMain.cambiarTarjeta(4);
+                Thread.sleep(300);
+                capturarFrame(vMain, "doc/images/gui_ejercicio_propuesto_17.png");
 
                 System.out.println("✓ ¡Todas las capturas de la Actividad 1 se guardaron con éxito!");
+                vMain.dispose();
                 System.exit(0);
 
             } catch (Exception e) {
@@ -72,10 +68,6 @@ public class CapturadorGUI {
     }
 
     private static void capturarFrame(JFrame frame, String pathOut) throws Exception {
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-        Thread.sleep(350);
-
         BufferedImage image = new BufferedImage(
             frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_ARGB
         );
@@ -88,6 +80,5 @@ public class CapturadorGUI {
         File fileOut = new File(pathOut);
         ImageIO.write(image, "png", fileOut);
         System.out.println("✓ Capturada: " + fileOut.getName());
-        frame.dispose();
     }
 }

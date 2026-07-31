@@ -1,102 +1,135 @@
 package ejercicio_resuelto_5;
 
 import Utilidades.UIUtils;
+
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
 /**
- * Ventana Swing interactiva para el Ejercicio Resuelto No 5 (Prueba de Escritorio).
+ * Panel interactivo para el Ejercicio Resuelto No 5.
+ * Prueba de escritorio y trazabilidad de variables X, Y y SUMA.
  * 
  * @author Cristian Ruiz Hernandez
- * @version 1.0/2026
+ * @version 2.0/2026
  */
-public class VentanaEjercicioResuelto5 extends JFrame {
-    private JTextField txtX, txtY;
-    private DefaultTableModel modeloTabla;
-    private JTable tablaPasos;
-    private JLabel lblResultadoFinal;
+public class VentanaEjercicioResuelto5 extends JPanel {
+
+    private JTextField txtXInicial;
+    private JTextField txtYInicial;
+    private JTable tblPasos;
+    private DefaultTableModel modelTabla;
+    private JTextArea txtResultado;
 
     public VentanaEjercicioResuelto5() {
-        UIUtils.aplicarTema();
-        setTitle("Ejercicio Resuelto No 5: Prueba de Escritorio (Seguimiento)");
-        setSize(720, 500);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout(15, 15));
+        setBackground(UIUtils.COLOR_FONDO);
+        setBorder(new EmptyBorder(15, 15, 15, 15));
 
-        JPanel panelCentral = new JPanel(new BorderLayout(12, 12));
-        UIUtils.estilizarPanel(panelCentral);
+        // ── Tarjeta Norte: Enunciado del Algoritmo ──────────────────────
+        JPanel pnlEnunciado = UIUtils.crearPanelTarjeta("Ejercicio Resuelto No 5: Prueba de Escritorio (Pág 49)", UIUtils.COLOR_ACCENTO5);
+        JTextArea txtEnunciado = new JTextArea(
+            "Algoritmo a evaluar:\n" +
+            "  1. SUMA = 0               2. X = 20\n" +
+            "  3. SUMA = SUMA + X         4. Y = 40\n" +
+            "  5. X = X + Y ** 2          6. SUMA = SUMA + X / Y\n" +
+            "  7. ESCRIBA: \"EL VALOR DE LA SUMA ES:\", SUMA"
+        );
+        txtEnunciado.setFont(UIUtils.FUENTE_CONSOLA);
+        txtEnunciado.setForeground(UIUtils.COLOR_TEXTO);
+        txtEnunciado.setBackground(UIUtils.COLOR_PANEL);
+        txtEnunciado.setEditable(false);
+        pnlEnunciado.add(txtEnunciado, BorderLayout.CENTER);
 
-        JPanel form = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 10));
-        form.setBackground(UIUtils.COLOR_FONDO);
+        // ── Tarjeta Centro: Entradas y Tabla de Trazabilidad ─────────────
+        JPanel pnlCentro = new JPanel(new BorderLayout(10, 10));
+        pnlCentro.setBackground(UIUtils.COLOR_FONDO);
 
-        form.add(new JLabel("Valor inicial de X:"));
-        txtX = new JTextField("20", 5);
-        form.add(txtX);
+        // Barra superior de inputs
+        JPanel pnlInputs = UIUtils.crearPanelTarjeta("Parámetros Iniciales de Prueba", UIUtils.COLOR_ACCENTO1);
+        pnlInputs.setLayout(new FlowLayout(FlowLayout.LEFT, 15, 5));
 
-        form.add(new JLabel("Valor inicial de Y:"));
-        txtY = new JTextField("40", 5);
-        form.add(txtY);
+        pnlInputs.add(new JLabel("Valor Inicial X:"));
+        txtXInicial = new JTextField("20", 6);
+        UIUtils.estilizarCampoTexto(txtXInicial);
+        pnlInputs.add(txtXInicial);
 
-        JButton btnEjecutar = new JButton("Ejecutar Prueba de Escritorio");
-        UIUtils.estilizarBoton(btnEjecutar);
+        pnlInputs.add(new JLabel("Valor Inicial Y:"));
+        txtYInicial = new JTextField("40", 6);
+        UIUtils.estilizarCampoTexto(txtYInicial);
+        pnlInputs.add(txtYInicial);
+
+        JButton btnEjecutar = new JButton("▶ Ejecutar Prueba de Escritorio");
+        UIUtils.estilizarBotonAccion(btnEjecutar, UIUtils.COLOR_ACCENTO2);
+        pnlInputs.add(btnEjecutar);
+
+        // Tabla de trazabilidad de la prueba de escritorio
+        String[] columnas = {"Paso", "Instrucción del Algoritmo", "Valor de X", "Valor de Y", "Valor de SUMA"};
+        modelTabla = new DefaultTableModel(columnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) { return false; }
+        };
+        tblPasos = new JTable(modelTabla);
+        tblPasos.setFont(UIUtils.FUENTE_CONSOLA);
+        tblPasos.setRowHeight(24);
+        tblPasos.setBackground(UIUtils.COLOR_CONSOLE_BG);
+        tblPasos.setForeground(UIUtils.COLOR_ACCENTO3);
+        tblPasos.setGridColor(UIUtils.COLOR_BORDES);
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        for (int i = 0; i < tblPasos.getColumnCount(); i++) {
+            tblPasos.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+
+        JScrollPane scrollTabla = new JScrollPane(tblPasos);
+        scrollTabla.setBorder(BorderFactory.createLineBorder(UIUtils.COLOR_BORDES, 1, true));
+
+        pnlCentro.add(pnlInputs, BorderLayout.NORTH);
+        pnlCentro.add(scrollTabla, BorderLayout.CENTER);
+
+        // ── Tarjeta Sur: Consola de Consolidado ────────────────────────
+        JPanel pnlSur = UIUtils.crearPanelTarjeta("Resultado Final del Algoritmo", UIUtils.COLOR_ACCENTO3);
+        txtResultado = new JTextArea(4, 40);
+        pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
+
+        add(pnlEnunciado, BorderLayout.NORTH);
+        add(pnlCentro, BorderLayout.CENTER);
+        add(pnlSur, BorderLayout.SOUTH);
+
         btnEjecutar.addActionListener(e -> ejecutarPrueba());
-
-        JButton btnDefecto = new JButton("Valores Originales del Libro (20, 40)");
-        UIUtils.estilizarBoton(btnDefecto);
-        btnDefecto.addActionListener(e -> {
-            txtX.setText("20");
-            txtY.setText("40");
-            ejecutarPrueba();
-        });
-
-        form.add(btnEjecutar);
-        form.add(btnDefecto);
-
-        String[] columnas = {"Paso", "Instrucción del Algoritmo", "Valor de X", "Valor de Y", "Valor Acumulado SUMA"};
-        modeloTabla = new DefaultTableModel(columnas, 0);
-        tablaPasos = new JTable(modeloTabla);
-        JScrollPane scrollTabla = new JScrollPane(tablaPasos);
-        scrollTabla.setBorder(BorderFactory.createTitledBorder("Traza / Prueba de Escritorio Paso a Paso"));
-
-        lblResultadoFinal = new JLabel("EL VALOR DE LA SUMA ES: 60.50", SwingConstants.CENTER);
-        lblResultadoFinal.setFont(UIUtils.FUENTE_TITULO);
-        lblResultadoFinal.setForeground(UIUtils.COLOR_PRIMARIO);
-
-        panelCentral.add(form, BorderLayout.NORTH);
-        panelCentral.add(scrollTabla, BorderLayout.CENTER);
-        panelCentral.add(lblResultadoFinal, BorderLayout.SOUTH);
-
-        add(panelCentral, BorderLayout.CENTER);
         ejecutarPrueba();
     }
 
     private void ejecutarPrueba() {
         try {
-            double xVal = Double.parseDouble(txtX.getText().trim());
-            double yVal = Double.parseDouble(txtY.getText().trim());
-            if (yVal == 0) throw new IllegalArgumentException("Y no puede ser cero para evitar división por cero.");
+            double xVal = Double.parseDouble(txtXInicial.getText().trim());
+            double yVal = Double.parseDouble(txtYInicial.getText().trim());
 
             EjercicioResuelto5 ej = new EjercicioResuelto5(xVal, yVal);
-            modeloTabla.setRowCount(0);
+            modelTabla.setRowCount(0);
 
-            for (EjercicioResuelto5.PasoPruebaEscritorio p : ej.getPasos()) {
-                Object[] fila = {
-                    p.getPaso(),
-                    p.getInstruccion(),
-                    String.format("%.2f", p.getValorX()),
-                    String.format("%.2f", p.getValorY()),
-                    String.format("%.2f", p.getValorSuma())
-                };
-                modeloTabla.addRow(fila);
+            for (EjercicioResuelto5.PasoPruebaEscritorio paso : ej.getPasos()) {
+                modelTabla.addRow(new Object[]{
+                    "Paso " + paso.getPaso(),
+                    paso.getInstruccion(),
+                    String.format("%.2f", paso.getValorX()),
+                    String.format("%.2f", paso.getValorY()),
+                    String.format("%.2f", paso.getValorSuma())
+                });
             }
 
-            lblResultadoFinal.setText(String.format("EL VALOR DE LA SUMA ES: %.2f", ej.getSumaFinal()));
+            StringBuilder sb = new StringBuilder();
+            sb.append(">>> RESULTADO FINAL DE LA PRUEBA DE ESCRITORIO <<<\n");
+            sb.append(String.format("  • Valor acumulado final de X    = %.2f\n", ej.getXFinal()));
+            sb.append(String.format("  • Valor acumulado final de Y    = %.2f\n", ej.getYFinal()));
+            sb.append(String.format("  • VALOR FINAL DE LA SUMA        = %.2f\n", ej.getSumaFinal()));
+            txtResultado.setText(sb.toString());
 
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Ingrese números válidos para X e Y.", "Error de entrada", JOptionPane.ERROR_MESSAGE);
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Validación", JOptionPane.WARNING_MESSAGE);
+        } catch (Exception ex) {
+            txtResultado.setText("ERROR: Por favor ingrese valores numéricos válidos para X e Y.");
         }
     }
 }
