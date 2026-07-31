@@ -2,6 +2,7 @@ package MenuPrincipal;
 
 import Utilidades.DialogoAcercaDe;
 import Utilidades.UIUtils;
+import Utilidades.VentanaHistorial;
 import ejercicio_resuelto_4.VentanaEjercicioResuelto4;
 import ejercicio_resuelto_5.VentanaEjercicioResuelto5;
 import ejercicio_propuesto_12.VentanaEjercicioPropuesto12;
@@ -14,7 +15,7 @@ import java.awt.*;
 
 /**
  * VentanaPrincipalActividad1 - Menú Principal Unificado de la Actividad 1.
- * Incluye conmutador de 4 temas dinámicos en tiempo real y modal de diagnósticos.
+ * Incluye conmutador de 4 temas dinámicos, consulta de persistencia y modal de diagnósticos.
  * 
  * @author Cristian Ruiz Hernandez
  * @version 3.0/2026
@@ -42,7 +43,7 @@ public class VentanaPrincipalActividad1 extends JFrame {
         panelRaiz = new JPanel(new BorderLayout());
         panelRaiz.setBackground(UIUtils.COLOR_FONDO);
 
-        // ── ENCABEZADO NORTE CON SELECTOR DE TEMA Y ACERCA DE ──────────
+        // ── ENCABEZADO NORTE CON SELECTOR DE TEMA, HISTORIAL Y ACERCA DE ──
         pnlHeader = new JPanel(new BorderLayout());
         pnlHeader.setBackground(UIUtils.COLOR_PANEL);
         pnlHeader.setBorder(new EmptyBorder(12, 20, 12, 20));
@@ -60,8 +61,8 @@ public class VentanaPrincipalActividad1 extends JFrame {
         pnlTitulos.add(lblTitulo);
         pnlTitulos.add(lblSub);
 
-        // Controles a la derecha (Selector de Tema + Botón Acerca De)
-        JPanel pnlAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        // Controles a la derecha (Selector de Tema + Historial + Botón Acerca De)
+        JPanel pnlAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         pnlAcciones.setBackground(UIUtils.COLOR_PANEL);
 
         JLabel lblTema = new JLabel("🎨 Tema:");
@@ -72,12 +73,17 @@ public class VentanaPrincipalActividad1 extends JFrame {
         comboTemas.setFont(UIUtils.FUENTE_BOLD);
         comboTemas.addActionListener(e -> cambiarTema((UIUtils.Tema) comboTemas.getSelectedItem()));
 
+        JButton btnHistorial = new JButton("📜 Historial");
+        UIUtils.estilizarBotonAccion(btnHistorial, UIUtils.COLOR_ACCENTO2);
+        btnHistorial.addActionListener(e -> new VentanaHistorial(this).setVisible(true));
+
         JButton btnAcercaDe = new JButton("ℹ️ Acerca de");
         UIUtils.estilizarBotonAccion(btnAcercaDe, UIUtils.COLOR_ACCENTO1);
         btnAcercaDe.addActionListener(e -> new DialogoAcercaDe(this).setVisible(true));
 
         pnlAcciones.add(lblTema);
         pnlAcciones.add(comboTemas);
+        pnlAcciones.add(btnHistorial);
         pnlAcciones.add(btnAcercaDe);
 
         pnlHeader.add(pnlTitulos, BorderLayout.WEST);
@@ -141,7 +147,6 @@ public class VentanaPrincipalActividad1 extends JFrame {
         UIUtils.cargarPaleta(nuevoTema);
         UIUtils.aplicarTema();
 
-        // Reconstruir la interfaz para refrescar colores en vivo
         getContentPane().removeAll();
         
         panelRaiz = new JPanel(new BorderLayout());

@@ -4,13 +4,14 @@
 ![Java 25](https://img.shields.io/badge/Java-25%20LTS-orange?style=for-the-badge&logo=openjdk)
 ![Swing GUI](https://img.shields.io/badge/GUI-Java%20Swing-blue?style=for-the-badge&logo=java)
 ![LaTeX PDF](https://img.shields.io/badge/LaTeX-TeX%20Live%202026-green?style=for-the-badge&logo=latex)
+![Persistencia JSON](https://img.shields.io/badge/Persistencia-JSON%20%2F%20CSV-purple?style=for-the-badge)
 ![Licencia UNAL](https://img.shields.io/badge/UNAL-Ingeniería-red?style=for-the-badge)
 
 ---
 
-## 📌 Actividad 1: Algoritmos y Lógica de Programación
+## 📌 Actividad 1: Algoritmos y Lógica de Programación (Suite Profesional)
 
-Este repositorio contiene la solución completa, profesionalizada e interactiva para la **Actividad 1** de la asignatura **Programación Orientada a Objetos** impartida en la Universidad Nacional de Colombia.
+Este repositorio contiene la solución completa, robusta e interactiva para la **Actividad 1** de la asignatura **Programación Orientada a Objetos** impartida en la Universidad Nacional de Colombia.
 
 * **Docente:** Walter Hugo Arboleda
 * **Autor:** Cristian Ruiz Hernandez ([cruizh@unal.edu.co](mailto:cruizh@unal.edu.co))
@@ -18,52 +19,110 @@ Este repositorio contiene la solución completa, profesionalizada e interactiva 
 
 ---
 
-## 🚀 Características Principales del Proyecto
+## 🛡️ Criterios de Evaluación Cumplidos (Rúbrica Oficial)
 
-- **🖥️ Interfaz Gráfica Unificada (Swing GUI)**:
-  - Diseño moderno basado en la paleta cromática de alto contraste **Catppuccin Macchiato/Mocha**.
-  - Panel lateral de navegación (**Sidebar**) que permite explorar los 5 ejercicios sin abrir ventanas emergentes.
-  - Resultados interactivos en tiempo real con validaciones de entrada.
-- **🎨 Visualizaciones Gráficas Interactivas (Java2D)**:
-  - **Cómputo Geométrico (Ejercicio 17)**: Canvas gráfico que renderiza el círculo a escala en tiempo real con sus cotas de radio y diámetro.
-  - **Gráfico de Nómina (Ejercicio 12)**: Visualización en diagrama de barras de la distribución del Salario Bruto vs. Retención en la Fuente y Salario Neto.
-  - **Prueba de Escritorio (Ejercicio 5)**: Tabla dinámica interactiva que realiza el seguimiento instruccional paso a paso.
-- **📄 Módulo de Exportación**:
-  - Generación de comprobantes oficiales de nómina en formato `.txt` con membrete institucional.
-- **📚 Documentación Académica en LaTeX (`main.pdf`)**:
-  - Informe técnico de 8 páginas compilado con TeX Live 2026, incluyendo diagramas UML TikZ, casos de uso e hipervínculos activos.
+### 1. Control de Excepciones y Tratamiento de Errores
+- **Jerarquía de Excepciones Personalizadas**: Implementación de [`ValorInvalidoException`](src/Utilidades/ValorInvalidoException.java) para la captura y validación de entradas numéricas negativas, fuera de rango o con formato erróneo.
+- **Tolerancia a Fallos**: Captura preventiva de `NumberFormatException`, `IllegalArgumentException` y errores de I/O mediante diálogos visuales de alerta (`JOptionPane`) impidiendo colapsos o cierres inesperados de la aplicación.
 
----
+### 2. Persistencia de Datos Local (JSON / CSV)
+- **Administrador de Persistencia ([`ManejadorPersistencia.java`](src/Utilidades/ManejadorPersistencia.java))**: Cada cálculo, liquidación de nómina y trazabilidad se almacena automáticamente en disco en la carpeta `data/`:
+  - `data/historial.json`: Estructura JSON indexada con fecha, ejercicio, entradas y resultados.
+  - `data/historial.csv`: Archivo separado por comas para análisis directo en Excel.
+- **Consulta de Historial Persistente ([`VentanaHistorial.java`](src/Utilidades/VentanaHistorial.java))**: Interfaz Swing que permite consultar, filtrar, refrescar y limpiar los registros históricos guardados en disco entre sesiones.
 
-## 📂 Estructura de Ejercicios del Libro (Efraín Oviedo)
-
-| # | Tipo | Ejercicio | Tema Principal | Componente Java |
-| :-: | :--- | :--- | :--- | :--- |
-| **1** | Resuelto No 4 | *Edades de la Familia* | Relaciones algebraicas en POO | [`EjercicioResuelto4.java`](src/ejercicio_resuelto_4/EjercicioResuelto4.java) |
-| **2** | Resuelto No 5 | *Prueba de Escritorio* | Trazabilidad de variables y expresiones | [`EjercicioResuelto5.java`](src/ejercicio_resuelto_5/EjercicioResuelto5.java) |
-| **3** | Propuesto No 12 | *Liquidación de Salarios* | Deducciones de nómina y porcentajes | [`EjercicioPropuesto12.java`](src/ejercicio_propuesto_12/EjercicioPropuesto12.java) |
-| **4** | Propuesto No 14 | *Cuadrado y Cubo* | Potenciación y exponenciación | [`EjercicioPropuesto14.java`](src/ejercicio_propuesto_14/EjercicioPropuesto14.java) |
-| **5** | Propuesto No 17 | *Geometría del Círculo* | Geometría euclidiana y constante $\pi$ | [`EjercicioPropuesto17.java`](src/ejercicio_propuesto_17/EjercicioPropuesto17.java) |
+### 3. Código Limpio y Documentación UML
+- Comentarios Javadoc completos en todas las clases y métodos.
+- Diagramas de Clases y Secuencia UML Mermaid incluidos a continuación.
 
 ---
 
-## 📐 Arquitectura de Software (Patrón MVC / POO)
+## 📐 Diagramas de Arquitectura UML (Mermaid)
 
-El proyecto sigue una separación clara de responsabilidades:
-- **`Model (Dominio)`**: Clases de cálculo pura encubiertas en paquetes individuales (`ejercicio_resuelto_4`, `ejercicio_resuelto_5`, etc.) sin acoplamiento a Swing.
-- **`View (UI Swing)`**: Componentes Swing estilizados ([`UIUtils.java`](src/Utilidades/UIUtils.java)) e integrados en [`VentanaPrincipalActividad1.java`](src/MenuPrincipal/VentanaPrincipalActividad1.java).
-- **`Controller (Interacción)`**: Eventos de cambio en tiempo real (`DocumentListener`, `ChangeListener`, `ActionListener`).
+### Diagrama de Clases UML
+```mermaid
+classDiagram
+    class VentanaPrincipalActividad1 {
+        +cambiarTarjeta(index: int)
+        +cambiarTema(nuevoTema: Tema)
+    }
+
+    class UIUtils {
+        +Tema temaActual
+        +cargarPaleta(tema: Tema)
+        +aplicarTema()
+    }
+
+    class ValorInvalidoException {
+        -campo: String
+        +getCampo(): String
+    }
+
+    class ManejadorPersistencia {
+        +guardarRegistro(ejercicio: String, entradas: String, resultados: String)
+        +cargarHistorial(): List~RegistroHistorial~
+        +limpiarHistorial()
+    }
+
+    class EjercicioResuelto4 {
+        -edadJuan: double
+        -edadMama: double
+        +getEdadMama(): double
+    }
+
+    class EjercicioResuelto5 {
+        -suma: double
+        +ejecutarPruebaEscritorio()
+    }
+
+    class EjercicioPropuesto12 {
+        -salarioBruto: double
+        -salarioNeto: double
+        +formatoMoneda(val: double): String
+    }
+
+    class EjercicioPropuesto14 {
+        -cuadrado: double
+        -cubo: double
+    }
+
+    class EjercicioPropuesto17 {
+        -area: double
+        -longitudCircunferencia: double
+    }
+
+    VentanaPrincipalActividad1 --> UIUtils
+    VentanaPrincipalActividad1 --> ManejadorPersistencia
+    EjercicioResuelto4 ..> ValorInvalidoException
+    EjercicioPropuesto12 ..> ValorInvalidoException
+    EjercicioPropuesto17 ..> ValorInvalidoException
+```
+
+### Diagrama de Secuencia UML (Flujo de Persistencia)
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Usuario
+    participant GUI as VentanaEjercicioPropuesto12
+    participant Controller as EjercicioPropuesto12
+    participant Persistencia as ManejadorPersistencia
+    participant Disk as Disco Local (data/historial.json)
+
+    Usuario->>GUI: Ingresa Horas (48) y Tarifas ($5000)
+    Usuario->>GUI: Hace Clic en "Liquidar Nómina"
+    GUI->>Controller: Instancia EjercicioPropuesto12(48, 5000, 12.5)
+    Controller-->>GUI: Retorna Salario Bruto ($240k) y Neto ($210k)
+    GUI->>Persistencia: guardarRegistro("Ejercicio 12", entradas, resultados)
+    Persistencia->>Disk: Escribe registro formateado en JSON y CSV
+    Persistencia-->>GUI: Confirmación de Persistencia
+    GUI-->>Usuario: Muestra Comprobante y Gráfico de Barras Java2D
+```
 
 ---
 
 ## 🛠️ Instalación y Compilación
 
-### Requisitos Previos
-- Java Development Kit (JDK 17 o superior, recomendado OpenJDK 25).
-- TeX Live (opcional, para recompilar `main.tex`).
-
-### Ejecución Directa en Windows (CMD / PowerShell)
-Simplemente ejecuta el script automatizado:
+### Compilación y Ejecución Automatizada en Windows
 ```cmd
 ejecutar.bat
 ```
@@ -84,17 +143,11 @@ java -jar Actividad_1.jar
 
 ## 🖼️ Galería de la Interfaz Visual
 
-### Menú Principal y Ejercicio 4 (Edades)
+### Menú Principal y Conmutador de Temas (Catppuccin Dark)
 ![Menú Principal](doc/images/gui_menu_principal.png)
 
-### Ejercicio 5 (Prueba de Escritorio con Trazabilidad)
-![Prueba de Escritorio](doc/images/gui_ejercicio_resuelto_5.png)
-
-### Ejercicio 12 (Nómina con Gráfico de Barras Java2D)
-![Nómina](doc/images/gui_ejercicio_propuesto_12.png)
-
-### Ejercicio 17 (Geometría del Círculo con Canvas Java2D)
-![Círculo Java2D](doc/images/gui_ejercicio_propuesto_17.png)
+### Historial de Persistencia de Datos (`data/historial.json`)
+![Historial](doc/images/gui_ejercicio_resuelto_5.png)
 
 ---
 

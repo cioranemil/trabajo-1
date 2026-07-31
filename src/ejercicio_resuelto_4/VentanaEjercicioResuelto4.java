@@ -1,6 +1,8 @@
 package ejercicio_resuelto_4;
 
+import Utilidades.ManejadorPersistencia;
 import Utilidades.UIUtils;
+import Utilidades.ValorInvalidoException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -8,10 +10,10 @@ import java.awt.*;
 
 /**
  * Panel interactivo para el Ejercicio Resuelto No 4.
- * Cálculo de edades de Juan, Alberto, Ana y la Mamá.
+ * Cálculo de edades de Juan, Alberto, Ana y la Mamá con excepciones personalizadas y persistencia.
  * 
  * @author Cristian Ruiz Hernandez
- * @version 2.0/2026
+ * @version 3.0/2026
  */
 public class VentanaEjercicioResuelto4 extends JPanel {
 
@@ -103,7 +105,7 @@ public class VentanaEjercicioResuelto4 extends JPanel {
 
         // ── Tarjeta Sur: Consola de Salida ──────────────────────────────
         JPanel pnlSur = UIUtils.crearPanelTarjeta("Registro de Consola y Ejecución", UIUtils.COLOR_TEXTO_DIM);
-        txtResultado = new JTextArea(6, 40);
+        txtResultado = new JTextArea(5, 40);
         pnlSur.add(UIUtils.crearConsolaEstilizada(txtResultado), BorderLayout.CENTER);
 
         add(pnlEnunciado, BorderLayout.NORTH);
@@ -116,13 +118,7 @@ public class VentanaEjercicioResuelto4 extends JPanel {
             txtEdadJuan.setText(String.valueOf(sliderEdadJuan.getValue()));
             calcular();
         });
-        txtEdadJuan.addActionListener(e -> {
-            try {
-                int val = Integer.parseInt(txtEdadJuan.getText().trim());
-                if (val >= 1 && val <= 50) sliderEdadJuan.setValue(val);
-            } catch (Exception ignored) {}
-            calcular();
-        });
+        txtEdadJuan.addActionListener(e -> calcular());
 
         calcular();
     }
@@ -137,7 +133,18 @@ public class VentanaEjercicioResuelto4 extends JPanel {
 
     private void calcular() {
         try {
-            double edadJ = Double.parseDouble(txtEdadJuan.getText().trim());
+            String strEdad = txtEdadJuan.getText().trim();
+            double edadJ;
+            try {
+                edadJ = Double.parseDouble(strEdad);
+            } catch (NumberFormatException nfe) {
+                throw new ValorInvalidoException("La edad de Juan debe ser un valor numérico válido.", "Edad de Juan");
+            }
+
+            if (edadJ <= 0 || edadJ > 120) {
+                throw new ValorInvalidoException("La edad de Juan debe estar en un rango razonable entre 1 y 120 años.", "Edad de Juan");
+            }
+
             EjercicioResuelto4 ej = new EjercicioResuelto4(edadJ);
 
             lblResJuan.setText(String.format("Juan: %.2f años", ej.getEdadJuan()));
@@ -150,14 +157,20 @@ public class VentanaEjercicioResuelto4 extends JPanel {
             sb.append(String.format("  • Edad de Juan    = %.2f años\n", ej.getEdadJuan()));
             sb.append(String.format("  • Edad de Alberto = (2/3) * %.2f = %.2f años\n", ej.getEdadJuan(), ej.getEdadAlberto()));
             sb.append(String.format("  • Edad de Ana     = (4/3) * %.2f = %.2f años\n", ej.getEdadJuan(), ej.getEdadAna()));
-            sb.append(String.format("  • Edad de la Mamá = %.2f + %.2f + %.2f = %.2f años\n\n",
+            sb.append(String.format("  • Edad de la Mamá = %.2f + %.2f + %.2f = %.2f años\n",
                 ej.getEdadJuan(), ej.getEdadAlberto(), ej.getEdadAna(), ej.getEdadMama()));
-            sb.append(ej.esEdadExacta() ? "  [INFORMACIÓN] La edad de Juan permite edades enteras exactas." :
-                                         "  [INFORMACIÓN] La edad de Juan genera edades con fracciones de año.");
             txtResultado.setText(sb.toString());
 
+            // Persistencia
+            ManejadorPersistencia.guardarRegistro("Ejercicio Resuelto 4",
+                "Juan=" + edadJ + " años",
+                String.format("Mamá=%.2f, Alberto=%.2f, Ana=%.2f", ej.getEdadMama(), ej.getEdadAlberto(), ej.getEdadAna()));
+
+        } catch (ValorInvalidoException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error en Parámetro", JOptionPane.ERROR_MESSAGE);
+            txtResultado.setText("⚠️ ERROR DE VALIDACIÓN: " + ex.getMessage());
         } catch (Exception ex) {
-            txtResultado.setText("ERROR: Por favor ingrese un número válido para la edad de Juan.");
+            txtResultado.setText("⚠️ ERROR INESPERADO: " + ex.getMessage());
         }
     }
 }
